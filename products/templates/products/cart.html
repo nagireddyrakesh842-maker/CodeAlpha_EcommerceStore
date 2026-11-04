@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 30px 6%;
+            background: #f4f6f9;
+            color: #222;
+        }
+        .cart {
+            max-width: 850px;
+            margin: auto;
+        }
+        .item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 4px;
+        }
+        button {
+            cursor: pointer;
+        }
+        .total {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        a { color: #2563eb; }
+    </style>
+    {% load static %}
+<link rel="stylesheet" href="{% static 'products/style.css' %}">
+</head>
+<body>
+    <main class="cart">
+        <h1>Your Shopping Cart</h1>
+
+        {% if items %}
+            {% for item in items %}
+                <section class="item">
+                    <h3>{{ item.product.name }}</h3>
+                    <p>Price: ₹{{ item.product.price }}</p>
+                    <p>Subtotal: ₹{{ item.subtotal }}</p>
+
+                    <form method="post"
+                          action="{% url 'update_cart' item.product.id %}">
+                        {% csrf_token %}
+                        <label for="quantity-{{ item.product.id }}">
+                            Quantity:
+                        </label>
+                        <input
+                            id="quantity-{{ item.product.id }}"
+                            type="number"
+                            name="quantity"
+                            min="0"
+                            max="{{ item.product.stock }}"
+                            value="{{ item.quantity }}"
+                            required
+                        >
+                        <button type="submit">Update</button>
+                    </form>
+
+                    <form method="post"
+                          action="{% url 'remove_from_cart' item.product.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Remove</button>
+                    </form>
+                </section>
+            {% endfor %}
+
+            <p class="total">Total: ₹{{ total }}</p>
+<p>Shipping details will be collected at checkout.</p>
+<a href="{% url 'checkout' %}">Proceed to Checkout</a>
+        {% else %}
+            <p>Your cart is empty.</p>
+        {% endif %}
+
+        <a href="{% url 'product_list' %}">Continue Shopping</a>
+    </main>
+</body>
+</html>

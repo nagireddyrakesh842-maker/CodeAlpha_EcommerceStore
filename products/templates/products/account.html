@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Account</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f9; padding: 30px; }
+        main { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 12px; }
+        a, button { display: inline-block; margin-top: 12px; padding: 10px 15px; }
+        button { background: #dc2626; color: white; border: 0; cursor: pointer; }
+    </style>
+    {% load static %}
+<link rel="stylesheet" href="{% static 'products/style.css' %}">
+</head>
+<body>
+<main>
+    <h1>My Account</h1>
+    <p>Welcome, {{ request.user.username }}!</p>
+    <p>You are successfully logged in.</p>
+<p><a href="{% url 'order_history' %}">My Order History</a></p>
+    <a href="{% url 'product_list' %}">Continue Shopping</a>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Log Out</button>
+    </form>
+</main>
+</body>
+</html>

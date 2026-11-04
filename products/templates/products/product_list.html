@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My E-commerce Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f9;
+            color: #222;
+        }
+        header {
+            background: #172554;
+            color: white;
+            padding: 24px 6%;
+        }
+        header h1 { margin: 0 0 8px; }
+        main { padding: 28px 6%; }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px #00000012;
+        }
+        .category { color: #64748b; font-size: 14px; }
+        .price { font-size: 22px; font-weight: bold; color: #166534; }
+        a {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+        .empty { background: white; padding: 24px; border-radius: 10px; }
+    </style>
+    {% load static %}
+<link rel="stylesheet" href="{% static 'products/style.css' %}">
+</head>
+<body>
+    
+<header>
+    <h1>My E-commerce Store</h1>
+    <p>Find products you love.</p>
+
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}!</p>
+        <a href="{% url 'account' %}">My Account</a>
+        <a href="{% url 'cart' %}">Shopping Cart</a>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Log Out</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}">Log In</a>
+        <a href="{% url 'register' %}">Register</a>
+        <a href="{% url 'cart' %}">Shopping Cart</a>
+    {% endif %}
+</header>
+
+
+    <main>
+        <h2>Our Products</h2>
+
+        {% if products %}
+            <div class="products">
+                {% for product in products %}
+                    <div class="card">
+                        <p class="category">{{ product.category }}</p>
+                        <h3>{{ product.name }}</h3>
+                        <p class="price">₹{{ product.price }}</p>
+
+                        {% if product.stock > 0 %}
+                            <p>In stock: {{ product.stock }}</p>
+                        {% else %}
+                            <p>Out of stock</p>
+                        {% endif %}
+
+                        <a href="{% url 'product_detail' product.id %}">
+                            View Details
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty">
+                <h3>No products available yet.</h3>
+                <p>Add products through the admin panel to display them here.</p>
+                <a href="{% url 'admin:index' %}">Open Admin Panel</a>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>
