@@ -1,29 +1,52 @@
 
 from django.contrib import admin
-from .models import Product
+from .models import Product, Order, OrderItem
+
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'stock', 'category', 'created_at')
-    search_fields = ('name', 'category')
-    list_filter = ('category',)
-
-from .models import Order, OrderItem
+    list_display = ('id', 'name', 'price', 'stock')
+    search_fields = ('name',)
 
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
-    readonly_fields = ('product_name', 'quantity', 'unit_price')
+    max_num = 0
+    can_delete = False
+
+    readonly_fields = (
+        'product',
+        'product_name',
+        'quantity',
+        'unit_price',
+    )
 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'user', 'full_name',
-        'total_amount', 'status', 'created_at'
+        'id',
+        'user',
+        'full_name',
+        'total_amount',
+        'status',
+        'created_at',
     )
+
     list_filter = ('status', 'created_at')
     search_fields = ('full_name', 'user__username', 'phone')
-    readonly_fields = ('created_at',)
+
+    readonly_fields = (
+        'user',
+        'full_name',
+        'phone',
+        'shipping_address',
+        'total_amount',
+        'created_at',
+    )
+
     inlines = [OrderItemInline]
+
+    def has_add_permission(self, request):
+        return False

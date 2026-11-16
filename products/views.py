@@ -246,3 +246,15 @@ def order_history(request):
     return render(request, 'products/order_history.html', {
         'orders': orders
     })
+
+@login_required
+def order_detail(request, order_id):
+    order = get_object_or_404(
+        Order.objects.prefetch_related('items'),
+        id=order_id,
+        user=request.user
+    )
+
+    return render(request, 'products/order_detail.html', {
+        'order': order
+    })

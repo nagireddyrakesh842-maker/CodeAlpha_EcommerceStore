@@ -16,12 +16,14 @@
                 <p>Date: {{ order.created_at }}</p>
                 <p>Status: {{ order.get_status_display }}</p>
                 <p>Total: ₹{{ order.total_amount }}</p>
-
                 {% for item in order.items.all %}
                     <p>{{ item.product_name }} × {{ item.quantity }}</p>
                 {% endfor %}
             </section>
             <hr>
+            <a href="{% url 'order_detail' order.id %}">
+    View Order Details
+</a>
         {% empty %}
             <p>You haven't placed any orders yet.</p>
         {% endfor %}
